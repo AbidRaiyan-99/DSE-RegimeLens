@@ -1,67 +1,87 @@
+# DSE-RegimeLens: Classifying Market Regimes in the Dhaka Stock Exchange
 
-# DSE Stock-Movement Regime Classification
+**DSE-RegimeLens** is a machine learning project that investigates the classification of bullish, neutral, and bearish market regimes in the Dhaka Stock Exchange (DSE) using historical stock price and trading volume data.
 
-## Overview
-
-This project investigates whether historical price and trading-volume data can be used to classify future price movements of individual stocks listed on the Dhaka Stock Exchange (DSE).
-
-The study uses historical OHLCV data and machine learning models to classify stock movements into three categories: bullish, neutral, and bearish.
+The project evaluates a three-class classification approach and compares its performance against a persistence baseline, with particular attention to class imbalance and minority-class prediction.
 
 ## Research Objective
 
-To evaluate whether price- and volume-derived features can classify the five-trading-observation-ahead movement of frequently observed DSE stocks.
+Can historical price and volume features classify the market's future movement into bullish, neutral, and bearish regimes over the next five observations?
 
 ## Dataset
 
-The dataset contains historical stock-level trading information:
+- **Source:** Dhaka Stock Exchange Historical Data (1999–2025)
+- **Original records:** 1,523,921
+- **Original columns:** 7
+- **Trading codes:** 534 before filtering
+- **Date range:** January 1999 – April 2025
+- **Data type:** Historical OHLCV data
 
-- Trading Code
-- Date
-- Open
-- High
-- Low
-- Close
-- Volume
-
-For computational efficiency, the experiment selects the 50 trading codes with the most observations.
+The dataset includes trading code, date, open, high, low, close, and volume.
 
 ## Methodology
 
-The workflow includes:
+The project workflow includes:
 
-1. Data cleaning and preprocessing
-2. Feature engineering using historical prices and trading volume
-3. Three-class target construction using five-observation forward returns
-4. Chronological training and testing split
-5. Training Logistic Regression and Random Forest models
-6. Model evaluation using accuracy, macro F1-score, balanced accuracy, classification reports, and confusion matrices
+1. Data inspection and cleaning
+2. Feature engineering using historical returns, rolling volatility, moving-average relationships, and relative volume
+3. Construction of bullish, neutral, and bearish target labels
+4. Model evaluation using a chronological test split
+5. Comparison against a persistence baseline
+6. Analysis of class imbalance and classification errors
 
-### Target Classes
+The target labels are based on predefined positive and negative movement thresholds of 2%. See the paper and implementation for the exact target construction.
 
-- **Bullish:** Forward return above +2%
-- **Bearish:** Forward return below -2%
-- **Neutral:** Forward return between -2% and +2%, inclusive
+## Results
 
-## Repository Structure
+Evaluation on **862 test observations** produced the following results:
 
-```text
-DSE-RegimeLens/
-├── README.md
-├── DSE_RegimeLens.ipynb
-├── literature_review.md
-├── methodology.md
-└── experiment.ipynb
-```
+| Metric | Main Model | Persistence Baseline |
+|---|---:|---:|
+| Accuracy | 93.50% | 94.55% |
+| Macro F1-score | 0.4876 | 0.5669 |
 
-## Tools and Technologies
+Although the main model achieved 93.50% accuracy, it did not outperform the persistence baseline.
 
-- Python
-- Pandas and NumPy
-- Scikit-learn
-- Matplotlib and Seaborn
-- Google Colab
-- Jupyter Notebook
+The test set was heavily imbalanced, with 818 neutral, 30 bullish, and 14 bearish observations. The results highlight why accuracy alone can be misleading in imbalanced financial classification tasks.
+
+**Key finding:** The baseline outperformed the main model on both accuracy and macro F1-score. The results do not establish a profitable trading strategy.
+
+## Research Paper
+
+Read the full research paper:
+
+- [DSE-RegimeLens Research Paper](paper.md)
+
+## Presentation
+
+- [View Presentation (PDF)](DSE-RegimeLens_Presentation.pdf)
+- [Download PowerPoint (PPTX)](DSE-RegimeLens_Presentation.pptx)
+
+*The presentation links will work after the corresponding files have been uploaded to this repository using these exact filenames.*
 
 ## Limitations
 
-The results depend on historical data quality, selected stocks, engineered features, and target thresholds. This experiment classifies individual-stock movements; it does not predict the DSE index and is not investment advice.
+- Strong class imbalance, particularly for bullish and bearish regimes
+- Limited predictive performance for minority classes
+- The persistence baseline outperformed the main model
+- Classification results do not directly measure trading profitability
+- Further validation is needed across multiple chronological test periods
+
+## Future Work
+
+- Explore class weighting and resampling methods
+- Investigate alternative target thresholds
+- Evaluate additional machine learning models
+- Conduct multi-period chronological validation
+- Report per-class performance and confusion matrices
+- Evaluate potential trading strategies with transaction costs and realistic assumptions
+
+## References
+
+1. Gu, S., Kelly, B., & Xiu, D. (2020). *Empirical asset pricing via machine learning*. The Review of Financial Studies, 33(5), 2223–2273. https://doi.org/10.1093/rfs/hhaa009
+
+2. David, M. (2019). *Research on financial prediction using machine-learning methods*. https://doi.org/10.3233/AF-190900
+
+3. *An Interpretable Machine Learning Framework for Predicting Next-Day Firm-Level Market Stress in the Dhaka Stock Exchange*. (2026). Discover AI. https://link.springer.com/article/10.1007/s44163-026-02065-7
+
